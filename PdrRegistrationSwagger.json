@@ -1,0 +1,941 @@
+{
+  "openapi" : "3.0.2",
+  "info" : {
+    "description" : "This is the new API specification we will use to perform user registration, authentication, and profile management for the PDR.NET website and the MobilePDR app\n",
+    "version" : "1.0.0",
+    "title" : "Authentication API"
+  },
+  "tags" : [ {
+    "name" : "Users"
+  }, {
+    "name" : "Passwords"
+  }, {
+    "name" : "Authentication"
+  }, {
+    "name" : "Profile"
+  }, {
+    "name" : "Specialties"
+  }, {
+    "name" : "Address Types"
+  }, {
+    "name" : "Profession Types"
+  }, {
+    "name" : "Practice Types"
+  }, {
+    "name" : "States"
+  }, {
+    "name" : "Suffixes"
+  } ],
+  "servers" : [ {
+    "description" : "SwaggerHub API Auto Mocking",
+    "url" : "https://virtserver.swaggerhub.com/connectiverx3/PdrRegistrationAPI/1.0.0"
+  } ],
+  "paths" : {
+    "/users" : {
+      "post" : {
+        "tags" : [ "Users" ],
+        "summary" : "Create User",
+        "description" : "Creates a new user",
+        "operationId" : "createUser",
+        "requestBody" : {
+          "description" : "User Information",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/User"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created"
+          }
+        }
+      },
+      "head" : {
+        "tags" : [ "Users" ],
+        "summary" : "Existance Check",
+        "description" : "Checks to see if a user exists or not",
+        "operationId" : "checkForUser",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "email",
+          "schema" : {
+            "type" : "string"
+          },
+          "required" : true,
+          "description" : "The user's email address"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400" : {
+            "$ref" : "#/components/responses/BadRequest"
+          },
+          "404" : {
+            "$ref" : "#/components/responses/NotFound"
+          },
+          "401" : {
+            "$ref" : "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/account/reset_password" : {
+      "patch" : {
+        "tags" : [ "Passwords" ],
+        "summary" : "Reset Password",
+        "description" : "Resets a user's password",
+        "operationId" : "resetPassword",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ResetPasswordModel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "401" : {
+            "$ref" : "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/account/forgot_password" : {
+      "post" : {
+        "tags" : [ "Passwords" ],
+        "summary" : "Forgot Password",
+        "description" : "Creates a forgotten password request for a user",
+        "operationId" : "accountForgotPassword",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "emailAddress" : {
+                    "type" : "string",
+                    "description" : "The email address for the account",
+                    "maximum" : 100,
+                    "example" : "user@domain.com"
+                  }
+                },
+                "required" : [ "emailAddress" ]
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "No Content"
+          }
+        }
+      }
+    },
+    "/account/login" : {
+      "post" : {
+        "tags" : [ "Authentication" ],
+        "operationId" : "userLogin",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/LoginModel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "400" : {
+            "$ref" : "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/account/logout" : {
+      "post" : {
+        "tags" : [ "Authentication" ],
+        "operationId" : "userLogout",
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    },
+    "/profile/{userId}" : {
+      "get" : {
+        "tags" : [ "Profile" ],
+        "summary" : "Get Profile",
+        "description" : "Retrieves a user's profile",
+        "operationId" : "getProfile",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "userId",
+          "schema" : {
+            "type" : "string"
+          },
+          "required" : true,
+          "description" : "The user ID"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Profile"
+                }
+              }
+            }
+          },
+          "401" : {
+            "$ref" : "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "patch" : {
+        "tags" : [ "Profile" ],
+        "summary" : "Update Profile",
+        "description" : "Updates a user's profile",
+        "operationId" : "updateProfile",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "userId",
+          "schema" : {
+            "type" : "string"
+          },
+          "required" : true,
+          "description" : "The user ID"
+        } ],
+        "requestBody" : {
+          "description" : "Profile Information",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Profile"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          },
+          "401" : {
+            "$ref" : "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/specialties" : {
+      "get" : {
+        "tags" : [ "Specialties" ],
+        "summary" : "List Specialties",
+        "description" : "Retrieves a list of all available specialties",
+        "operationId" : "listSpecialties",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Specialty"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/specialties/{id}" : {
+      "get" : {
+        "tags" : [ "Specialties" ],
+        "summary" : "Get Specialty",
+        "description" : "Retrieves a specialty by ID",
+        "operationId" : "getSpecialty",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "The specialty ID",
+          "schema" : {
+            "type" : "integer"
+          },
+          "required" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Specialty"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/address_types" : {
+      "get" : {
+        "tags" : [ "Address Types" ],
+        "summary" : "List Address Types",
+        "description" : "Retrieves a list of all available address types",
+        "operationId" : "listAddressTypes",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/AddressType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/address_types/{id}" : {
+      "get" : {
+        "tags" : [ "Address Types" ],
+        "summary" : "Get Address Type",
+        "description" : "Retrieves an Address Type by ID",
+        "operationId" : "getAddressType",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "The address type ID",
+          "schema" : {
+            "type" : "integer"
+          },
+          "required" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AddressType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profession_types" : {
+      "get" : {
+        "tags" : [ "Profession Types" ],
+        "summary" : "List Profession Types",
+        "description" : "Retrieves a list of all available profession types",
+        "operationId" : "listProfessionTypes",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ProfessionType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profession_types/{id}" : {
+      "get" : {
+        "tags" : [ "Profession Types" ],
+        "summary" : "Get Profession Type",
+        "description" : "Retrieves a Profession Type by ID",
+        "operationId" : "getProfessionType",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "The profession type ID",
+          "schema" : {
+            "type" : "integer"
+          },
+          "required" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProfessionType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/practice_types" : {
+      "get" : {
+        "tags" : [ "Practice Types" ],
+        "summary" : "List Practice Types",
+        "description" : "Retrieves a list of all available practice types",
+        "operationId" : "listPracticeTypes",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/PracticeType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/practice_types/{id}" : {
+      "get" : {
+        "tags" : [ "Practice Types" ],
+        "summary" : "Get Practice Type",
+        "description" : "Retrieves a Practice Type by ID",
+        "operationId" : "getPracticeType",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "The practice type ID",
+          "schema" : {
+            "type" : "integer"
+          },
+          "required" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PracticeType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/states" : {
+      "get" : {
+        "tags" : [ "States" ],
+        "summary" : "List States",
+        "description" : "Retrieves a list of all available U.S. states",
+        "operationId" : "listStates",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/State"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/states/{code}" : {
+      "get" : {
+        "tags" : [ "States" ],
+        "summary" : "Get State",
+        "description" : "Retrieves a state by code",
+        "operationId" : "getState",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "code",
+          "description" : "The state code",
+          "schema" : {
+            "type" : "string"
+          },
+          "required" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/State"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/suffixes" : {
+      "get" : {
+        "tags" : [ "Suffixes" ],
+        "summary" : "List Suffixes",
+        "description" : "Retrieves a list of all available suffixes",
+        "operationId" : "listSuffixes",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string",
+                    "maximum" : 20,
+                    "example" : "M.D."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/suffixes/{id}" : {
+      "get" : {
+        "tags" : [ "Suffixes" ],
+        "summary" : "Get Suffix",
+        "description" : "Retrieves a suffix by ID",
+        "operationId" : "getSuffix",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "The suffix ID",
+          "schema" : {
+            "type" : "integer"
+          },
+          "required" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Suffix"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "securitySchemes" : {
+      "ApiKeyAuth" : {
+        "type" : "apiKey",
+        "in" : "header",
+        "name" : "X-API-KEY"
+      }
+    },
+    "schemas" : {
+      "User" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The unique ID for this user",
+            "readOnly" : true
+          },
+          "username" : {
+            "type" : "string",
+            "description" : "Username",
+            "maximum" : 100,
+            "example" : "bruce@wayneenterprises.com",
+            "readOnly" : true
+          },
+          "password" : {
+            "type" : "string",
+            "description" : "Password",
+            "maximum" : 30,
+            "example" : "1mBatM@n"
+          },
+          "email" : {
+            "type" : "string",
+            "description" : "Email Address",
+            "maximum" : 100,
+            "example" : "bruce@wayneenterprises.com"
+          },
+          "profile" : {
+            "$ref" : "#/components/schemas/Profile"
+          }
+        },
+        "required" : [ "email", "password" ]
+      },
+      "LoginModel" : {
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "description" : "Email Address",
+            "maximum" : 100,
+            "example" : "user@domain.com",
+            "writeOnly" : true
+          },
+          "password" : {
+            "type" : "string",
+            "description" : "Password",
+            "maximum" : 30,
+            "example" : "$uperM@n",
+            "writeOnly" : true
+          }
+        },
+        "required" : [ "emailAddress", "password" ]
+      },
+      "ResetPasswordModel" : {
+        "type" : "object",
+        "properties" : {
+          "emailAddress" : {
+            "type" : "string",
+            "description" : "Email Address",
+            "maximum" : 100,
+            "example" : "user@domain.com"
+          },
+          "newPassword" : {
+            "type" : "string",
+            "description" : "New Password",
+            "maximum" : 30,
+            "example" : "Bruc3W@yne"
+          },
+          "token" : {
+            "type" : "string",
+            "description" : "Auth Token",
+            "example" : "JHVwZXJNQG46QnJ1YzNXQHluZQ=="
+          }
+        },
+        "required" : [ "emailAddress", "newPassword", "afToken" ]
+      },
+      "Profile" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "The id of this profile",
+            "example" : 21,
+            "readOnly" : true
+          },
+          "firstName" : {
+            "type" : "string",
+            "description" : "First Name",
+            "maximum" : 50,
+            "example" : "Bruce"
+          },
+          "lastName" : {
+            "type" : "string",
+            "description" : "Last Name",
+            "maximum" : 50,
+            "example" : "Wayne"
+          },
+          "suffix" : {
+            "$ref" : "#/components/schemas/Suffix"
+          },
+          "address" : {
+            "$ref" : "#/components/schemas/Address"
+          },
+          "professionInfo" : {
+            "$ref" : "#/components/schemas/ProfessionInfo"
+          }
+        },
+        "required" : [ "firstName", "lastName", "professionInfo" ]
+      },
+      "AddressType" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "example" : 1,
+            "readOnly" : true
+          },
+          "description" : {
+            "type" : "string",
+            "maximum" : 50,
+            "example" : "Home",
+            "readOnly" : true
+          }
+        },
+        "required" : [ "description" ]
+      },
+      "State" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The state's abbreviation code",
+            "minimum" : 2,
+            "maximum" : 2,
+            "example" : "NY",
+            "readOnly" : true
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The state's full name",
+            "example" : "New York",
+            "maximum" : 100,
+            "writeOnly" : true
+          }
+        },
+        "required" : [ "code" ]
+      },
+      "Address" : {
+        "type" : "object",
+        "properties" : {
+          "addressType" : {
+            "$ref" : "#/components/schemas/AddressType"
+          },
+          "companyName" : {
+            "type" : "string",
+            "description" : "The name of the company or practice",
+            "maximum" : 100,
+            "example" : "Gotham General Hospital"
+          },
+          "line1" : {
+            "type" : "string",
+            "description" : "Address Line 1",
+            "maximum" : 100,
+            "example" : "123 Gordon Street"
+          },
+          "line2" : {
+            "type" : "string",
+            "description" : "Address Line 2",
+            "maximum" : 100
+          },
+          "city" : {
+            "type" : "string",
+            "description" : "City",
+            "maximum" : 50,
+            "example" : "Gotham City"
+          },
+          "state" : {
+            "$ref" : "#/components/schemas/State"
+          },
+          "postalCode" : {
+            "type" : "string",
+            "description" : "Postal Code",
+            "maximum" : 15,
+            "example" : 10001
+          },
+          "phone" : {
+            "type" : "string",
+            "description" : "Phone Number",
+            "maximum" : 15,
+            "example" : "888-555-1212"
+          },
+          "fax" : {
+            "type" : "string",
+            "description" : "Fax Number",
+            "maximum" : 15,
+            "example" : "888-555-1234"
+          }
+        },
+        "required" : [ "line1", "city", "state", "postalCode" ]
+      },
+      "ProfessionType" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "The profession type ID",
+            "example" : 1,
+            "readOnly" : true
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "The profession type description",
+            "example" : "Pediatrics",
+            "readOnly" : true
+          }
+        }
+      },
+      "PracticeType" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "The practice type ID",
+            "example" : 1,
+            "readOnly" : true
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "The practice type description",
+            "example" : "Family",
+            "readOnly" : true
+          }
+        }
+      },
+      "ProfessionInfo" : {
+        "type" : "object",
+        "properties" : {
+          "dea" : {
+            "type" : "string",
+            "description" : "The user's DEA",
+            "maximum" : 20
+          },
+          "npi" : {
+            "type" : "string",
+            "description" : "The user's NPI",
+            "maximum" : 20
+          },
+          "graduationYear" : {
+            "type" : "integer",
+            "description" : "The year of the user's graduation",
+            "example" : 1997
+          },
+          "birthYear" : {
+            "type" : "integer",
+            "description" : "The year of the user's birth",
+            "example" : 1969
+          },
+          "primarySpecialty" : {
+            "$ref" : "#/components/schemas/Specialty"
+          },
+          "secondarySpecialty" : {
+            "$ref" : "#/components/schemas/Specialty"
+          },
+          "professionType" : {
+            "$ref" : "#/components/schemas/ProfessionType"
+          },
+          "practiceType" : {
+            "$ref" : "#/components/schemas/PracticeType"
+          }
+        },
+        "required" : [ "professionType" ]
+      },
+      "Specialty" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "The specialty ID",
+            "example" : 3,
+            "readOnly" : true
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the specialty",
+            "maximum" : 50,
+            "example" : "Pediatrics",
+            "readOnly" : true
+          }
+        },
+        "required" : [ "id", "name" ]
+      },
+      "Suffix" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "The suffix ID",
+            "example" : 3,
+            "readOnly" : true
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The suffix name",
+            "maximum" : 20,
+            "readOnly" : true
+          }
+        },
+        "required" : [ "id", "name" ]
+      },
+      "Error" : {
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "description" : "Error Message",
+            "example" : "There was an error processing your request"
+          }
+        },
+        "required" : [ "message" ]
+      }
+    },
+    "responses" : {
+      "InternalServerError" : {
+        "description" : "An error occured while processing your request",
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "UnauthorizedError" : {
+        "description" : "Access token is missing or invalid",
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "NotFound" : {
+        "description" : "The resource was not found",
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "BadRequest" : {
+        "description" : "The request was invalid or missing information",
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+}
